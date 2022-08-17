@@ -60,32 +60,13 @@ jobs:
               optflags: '-O2'
             shared: disable
             # check: true
-          - name: 'gcc-11 annocheck'
-            container: gcc-11
-            env:
-              # Minimal flags to pass the check.
-              default_cc: 'gcc-11 -O2 -fcf-protection -Wa,--generate-missing-build-notes=yes'
-              LDFLAGS: '-Wl,-z,now'
-              # FIXME: Drop skipping options
-              # https://bugs.ruby-lang.org/issues/18061
-              # https://sourceware.org/annobin/annobin.html/Test-pie.html
-              TEST_ANNOCHECK_OPTS: "--skip-pie"
-            check: true
           - name: 'clang-14 LTO'
             container: clang-14
             env:
               default_cc: 'clang-14 -flto=auto'
               optflags: '-O2'
             shared: disable
-         
-          # -Wno-strict-prototypes is necessary with current clang-15 since
-          # older autoconf generate functions without prototype and -pedantic
-          # now implies strict-prototypes. Disabling the error but leaving the
-          # warning generates a lot of noise from use of ANYARGS in
-          # rb_define_method() and friends.
-          # See: https://github.com/llvm/llvm-project/commit/11da1b53d8cd3507959022cd790d5a7ad4573d94
-          - { name: RUBY_DEBUG,                     env: { cppflags: '-DRUBY_DEBUG' } }
-
+    
     name: ${{ matrix.entry.name }}
     runs-on: ubuntu-22.04
     container:
